@@ -1,48 +1,6 @@
 <?php
-
-$con = mysqli_connect("localhost","root","","zac");
-if(mysqli_connect_errno()){
-    echo "failed to connect". mysqli_connect_errno();
-}else{
-    echo "sucess";
-}
-if(isset($_POST)){
-    $fname = strip_tags($_POST['reg_fname']);
-    $fname = str_replace(' ','',$fname);//remove space
-    $fname = ucfirst(strtolower($fname));//upper case first letter
-
-
-
-    $lname = strip_tags($_POST['reg_lname']);
-    $lname = str_replace(' ','',$lname);
-    $lname = ucfirst(strtolower($lname));
-
-    $email_1 = strip_tags($_POST['email']);
-    $email_1 = str_replace(' ','',$email_1);
-    $email_1 = ucfirst(strtolower($email_1));
-
-    $email_2 = strip_tags($_POST['email2']);
-    $email_2 = str_replace(' ','',$email_2);
-    $email_2 = ucfirst(strtolower($email_2));
-
-    $password_1 = strip_tags($_POST['password']);
-   
-
-    $password_2 = strip_tags($_POST['confirm_password']);
-    
-    if ($email_1 == $email_2){
-        if(filter_var($email_2,FILTER_VALIDATE_EMAIL)){
-            $email = filter_var($email_2,FILTER_VALIDATE_EMAIL);
-            $e_xheck = mysqli_query($con,"SELECT email from users Where email='$email'");
-
-            $num_rows = mysqli_num_rows($e_xheck);
-            if ($num_rows >0){
-                echo "eamil exists";
-            }
-        }
-    }
-
-}
+require 'config/config.php';
+require 'includes/from_handlers/register_handler.php';
 
 
 
@@ -58,20 +16,33 @@ if(isset($_POST)){
 <body>
     <form action="register.php" method="post">
     
-    <input type="text" name="reg_fname" placeholder="firstname" required > 
+    <input type="text" name="reg_fname" placeholder="firstname"  value="<?php echo (isset($_SESSION['reg_fname'])) ? $_SESSION['reg_fname'] : ""; ?>"  required > 
    <br>
-    <input type="text" name="reg_lname" placeholder="lastname" required > 
+   
+    <?php echo (in_array("your first name must be betweeen 25 and 2 characters<br>",$errors)) ? "your first name must be betweeen 25 and 2 characters<br>" : ""; ?>
+
+    <input type="text" name="reg_lname" placeholder="lastname"  value="<?php echo (isset($_SESSION['reg_lname'])) ? $_SESSION['reg_lname'] : ""; ?>" required > 
     <br>
-    <input type="email" name="email" placeholder="email" required > 
+    <?php echo (in_array("your first name must be betweeen 25 and 2 characters<br>",$errors)) ? "email in use<br>" : ""; ?>
+    <input type="email" name="email" placeholder="email"  value="<?php echo (isset($_SESSION['reg_email'])) ? $_SESSION['reg_email'] : ""; ?>" required > 
     <br>
-    <input type="email" name="email2" placeholder="email2" required > 
+    <?php echo (in_array("invalid format<br>",$errors)) ? "invalid format<br>" : ""; ?>
+
+    <?php echo (in_array("email in use<br>",$errors)) ? "email in use<br>" : ""; ?>
+    <input type="email" name="email2" placeholder="email2"  value="<?php echo (isset($_SESSION['reg_email2'])) ? $_SESSION['reg_email2'] : ""; ?>" required > 
     <br>
     <input type="password" name="password" placeholder="password" required > 
     <br>
-    <input type="password" name="confrim_password" placeholder="confrim password" required > 
+    <input type="password" name="confirm_password" placeholder="confrim password" required > 
 
     <br>
+    <?php echo (in_array("your password must be between 5 and 30 characters<br >",$errors)) ? "your password must be between 5 and 30 characters<br >" : ""; ?>
+
 <input type="submit" value="register" name="register_button">    
+<?php echo (in_array("<span style='color:#14c800;'>you're all set go ahead and login</span><br>
+",$errors)) ? "<span style='color:#14c800;'>you're all set go ahead and login</span><br>
+" : ""; ?>
+
     </form>
 </body>
 </html>
